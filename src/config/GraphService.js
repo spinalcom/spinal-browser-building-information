@@ -28,8 +28,6 @@ import {
   spinalIO
 } from './spinal-io';
 var throttle = require('lodash.throttle');
-import { SCENE_RELATION_NAME, PART_RELATION_NAME, SCENE_RELATION_TYPE } 
-  from "spinal-env-viewer-plugin-scene/src/constants";
 
 export class GraphService {
   constructor() {
@@ -55,10 +53,6 @@ export class GraphService {
     return this.initPromise;
   }
   getScene() {
-      let sceneContextLst = SpinalGraphService.getContextWithType("SpinalService")
-      let sceneContext = sceneContextLst[0]
-      console.log(sceneContext);
-      return sceneContext.getChildren(SCENE_RELATION_NAME);    
   }
 
   async getOccupations(onChangeFunc) {

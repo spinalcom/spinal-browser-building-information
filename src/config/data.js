@@ -1,5 +1,4 @@
 import geographicService from "spinal-env-viewer-context-geographic-service";
-import { SERVICE_NAME, SPINAL_TICKET_SERVICE_TARGET_RELATION_NAME } from "spinal-service-ticket/dist/Constants";
 import graph from "./GraphService";
 
 const geographicConstants = geographicService.constants;
@@ -46,8 +45,6 @@ let dataService = {
   async getTickets(rooms, processInfo) {
     await graph.init();
 
-    let context = await graph.SpinalGraphService.getContext(
-      SERVICE_NAME );
     if (typeof context === "undefined")
       return Promise.resolve([]);
     this.ContextNode = context;

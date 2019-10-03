@@ -11,7 +11,6 @@
 
 <script>
 import { EventBus } from "../../config/event";
-import { SpinalServiceTicket } from 'spinal-service-ticket';
 
 export default {
   data() {
@@ -25,9 +24,7 @@ export default {
   },
   methods: {
    update: function(el, parentName) {
-      console.log("update process", el, parentName);
-      SpinalServiceTicket.init();
-      SpinalServiceTicket.getAllProcessAsync().then(ok => console.log("-------", ok))
+      console.log("update process", el, parentName)
     },
     getEvents: function() {
       EventBus.$on("selectCategory", (type, parentName) => this.update(type, parentName));
