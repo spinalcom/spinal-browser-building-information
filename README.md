@@ -1,2 +1,2 @@
-# spinal-browser-maintainer
-a specific browser for maintainer.
+# spinal-browser-building-information
+a specific browser for building information .
