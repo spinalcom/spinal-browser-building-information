@@ -2,18 +2,24 @@
   <div v-if="data"
        class="container-fluid">
     <app-header></app-header>
-
-      <app-sidebar 
-                class="sidebarContext-display"
-                :floors="data.floors"
-                @selectFloor="selecFloor"
-                :rooms="data.rooms" 
-                :allData="data" ></app-sidebar>
-      <app-viewer class="app-viewer-display"></app-viewer>
-
-      <ticket-data class="dataViewDisplay"
-                   :allData="data" ></ticket-data>
-
+    <v-container grid-list-md
+                 text-center
+                 class="mainContent">
+      <v-layout wrap
+                class="sizeMainContent">
+        <v-flex md6
+                sm12
+                class="dataViewDisplay">
+          <app-viewer class="forge_viewer"></app-viewer>
+        </v-flex>
+        <v-flex sm12
+                md6
+                class="dataViewDisplay"
+                style="overflow-y: auto;">
+          <buildinginformation></buildinginformation>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -22,17 +28,9 @@ import { EventBus } from "./config/event";
 import Vue from "vue";
 import appViewer from "./components/viewer/viewer.vue";
 import appHeader from "./components/header/header.vue";
-import sidebar from "./components/sidebar/sidebar.vue";
-import ticketData from "./components/ticketComponent/ticketData.vue";
-import sidebarContext from "./components/sidebar/sidebarContext.vue";
-import sidebarCategory from "./components/sidebar/sidebarCategory.vue";
-import DataView from "./components/dataview/dataview.vue";
-import MiddleBar from "./components/middlebar/middlebar.vue";
-import sidebarProcess from "./components/sidebar/sidebarElement.vue";
 import MainContainer from "./components/container/container.vue";
 import dataService from "./config/data";
-import contextualList from "./components/contextualList/contextualList.vue";
-
+import buildinginformation from "./components/buildinginformation/buildinginformation.vue";
 export default Vue.extend({
   data() {
     return {
@@ -44,17 +42,10 @@ export default Vue.extend({
     };
   },
   components: {
-    "app-sidebar": sidebar,
     "app-main": MainContainer,
-    contextualList,
-    sidebarContext,
-    sidebarCategory,
+    buildinginformation,
     appViewer,
-    DataView,
-    sidebarProcess,
-    MiddleBar,
-    appHeader,
-    ticketData
+    appHeader
   },
   created() {
     let self = this;
@@ -64,7 +55,7 @@ export default Vue.extend({
 
     setTimeout(function() {
       self.bindAllData();
-  }, 3000)
+    }, 3000);
   },
   methods: {
     mounted() {
@@ -72,53 +63,56 @@ export default Vue.extend({
     },
     bindAllData() {
       let self = this;
-     // console.log("binding", dataService.ContextNode, dataService.ProcessNodes, dataService.StepsNodes);
+      // console.log("binding", dataService.ContextNode, dataService.ProcessNodes, dataService.StepsNodes);
 
       this.bindObj.push(dataService.ContextNode);
-      this.bindObj.push(dataService.ContextNode.bind(function() {
-        self.refreshBind();
-        dataService.getAllData().then(allData => {
-          self.updateData(allData);
-          //self.data = allData;
-
-        });
-      }, false));
-
-      for (var ProcessNode in dataService.ProcessNodes) {
-        this.bindObj.push(dataService.ProcessNodes[ProcessNode]);
-        this.bindObj.push(dataService.ProcessNodes[ProcessNode].bind(function() {
+      this.bindObj.push(
+        dataService.ContextNode.bind(function() {
           self.refreshBind();
           dataService.getAllData().then(allData => {
             self.updateData(allData);
             //self.data = allData;
           });
-        }, false));
+        }, false)
+      );
+
+      for (var ProcessNode in dataService.ProcessNodes) {
+        this.bindObj.push(dataService.ProcessNodes[ProcessNode]);
+        this.bindObj.push(
+          dataService.ProcessNodes[ProcessNode].bind(function() {
+            self.refreshBind();
+            dataService.getAllData().then(allData => {
+              self.updateData(allData);
+              //self.data = allData;
+            });
+          }, false)
+        );
       }
 
       for (var Node in dataService.StepsNodes) {
         this.bindObj.push(dataService.StepsNodes[Node]);
-        this.bindObj.push(dataService.StepsNodes[Node].bind(function() {
-          self.refreshBind();
-          dataService.getAllData().then(allData => {
-            self.updateData(allData);
-            //self.data = allData;
-          });
-        }, false));
+        this.bindObj.push(
+          dataService.StepsNodes[Node].bind(function() {
+            self.refreshBind();
+            dataService.getAllData().then(allData => {
+              self.updateData(allData);
+              //self.data = allData;
+            });
+          }, false)
+        );
       }
 
       setTimeout(function() {
-   //     console.log("binobj = ", self.bindObj);
-      }, 2000)
-
+        //     console.log("binobj = ", self.bindObj);
+      }, 2000);
     },
     refreshBind() {
       let iterator = 0;
 
-      while(iterator > this.bindObj.length) {
-        this.bindObj[iterator].unbind(this.bindObj[iterator + 1])
-        iterator=iterator+2;
+      while (iterator > this.bindObj.length) {
+        this.bindObj[iterator].unbind(this.bindObj[iterator + 1]);
+        iterator = iterator + 2;
       }
-
     },
     updateData(data) {
       let self = this;
@@ -134,8 +128,7 @@ export default Vue.extend({
     selecFloor(id) {
       let self = this;
       this.data.floors.forEach(function(el) {
-        if (el.id === id)
-          self.floorSelected = el.name;
+        if (el.id === id) self.floorSelected = el.name;
       });
       //console.log(id, "== id, data", this.data);
       //this.floorSelected = id;
@@ -145,7 +138,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.roomcontext {
+padding .roomcontext {
   position: absolute;
   /*min-height: calc(100%);*/
   margin-left: 11%;
@@ -156,37 +149,55 @@ export default Vue.extend({
   height: calc(100%);
   font-family: sans-serif;
 }
-@media screen and (max-width: 992px) {
+/* .dataViewDisplay {
+  margin-left: calc(51.4%);
+  height: calc(100% - 70px);
+  background-color: rgba(1, 2, 1, 0);
+}*/
+@media screen and (max-width: 960px) {
   .dataViewDisplay {
-    background-color: grey;
-    height: calc(49%) !important;
-    margin-left: calc(189px) !important;
-    margin-top: calc(50%);
-    margin-left: 4%;
+    transition: 500ms all cubic-bezier(0.075, 0.82, 0.165, 1);
+    height: 50%;
   }
-/*  .app-viewer-display {
-    box-sizing: unset !important;
-  }*/
+}
+@media screen and (min-width: 960px) {
+  .dataViewDisplay {
+    transition: 500ms all cubic-bezier(0.075, 0.82, 0.165, 1);
+    height: 100%;
+  }
+}
+.forge_viewer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  float: left;
+}
+
+/* @media screen and (max-width: 992px) {
+  .forge_viewer {
+    width: 100%;
+    height: 470px !important;
+    position: relative;
+    float: left;
+  }
+} */
+.mainContent {
+  position: relative;
+  padding: unset;
+  height: calc(100% - 70px);
+  width: 100%;
+  max-width: unset;
+}
+.sizeMainContent {
+  height: 100%;
+  width: 100%;
 }
 
 .container-data {
-
 }
-
 
 .sidebarContext-display {
-  position:absolute;
+  position: absolute;
   display: block;
 }
-.dataViewDisplay {
-  margin-left: calc(160px + 51.4%);
-  background-color: rgba(1,2,1,0);
-/*  height: 93%;
-  width: 78%;*/
-/*  margin-left: 11%;
-  background-color: rgba(1,2,1,0);
-  display: inline;
-  height: 46%;
-  width: 74%;
-*/}
 </style>

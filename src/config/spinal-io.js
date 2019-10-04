@@ -38,7 +38,7 @@ let $ = require("jquery");
 
 const SpinalUserManager = window.SpinalUserManager;
 
-function getParameterByName(name, url) {
+export function getParameterByName(name, url) {
   if (!url) url = window.location.href;
   name = name.replace(/[[\]]/g, '\\$&');
   var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -95,12 +95,12 @@ class SpinalIO {
         if (this.user.username) {
           SpinalUserManager.get_user_id(
             'http://' + window.location.host, user.username, user
-            .password,
+              .password,
             response => {
               this.spinalUserId = parseInt(response);
               this.conn =
                 window.spinalCore.connect(`http://${this.spinalUserId}:${
-                user.password}@${window.location.host}/`);
+                  user.password}@${window.location.host}/`);
               resolve(this.conn);
             },
             () => {
@@ -196,12 +196,12 @@ class SpinalIO {
         if (withAdminCheck === true) {
           return this.loadPtr(userFile).then(
             async (res) => {
-                await this.checkUserAdmin(user, res);
-                return res;
-              },
-              () => {
-                throw new Error('Undefined User');
-              });
+              await this.checkUserAdmin(user, res);
+              return res;
+            },
+            () => {
+              throw new Error('Undefined User');
+            });
         } else {
           return this.loadPtr(userFile);
         }
